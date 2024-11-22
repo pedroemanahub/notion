@@ -1,0 +1,80 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Clock, Pause, Play } from 'lucide-react';
+
+const RastreadorDeTempo = () => {
+  const [tempo, setTempo] = useState(0);
+  const [emExecucao, setEmExecucao] = useState(false);
+  const [intervalos, setIntervalos] = useState([]);
+
+  useEffect(() => {
+    let intervalo;
+    if (emExecucao) {
+      intervalo = setInterval(() => {
+        setTempo(tempoAnterior => tempoAnterior + 1);
+      }, 1000);
+    }
+    return () => clearInterval(intervalo);
+  }, [emExecucao]);
+
+  const formatarTempo = (totalSegundos) => {
+    const horas = Math.floor(totalSegundos / 3600);
+    const minutos = Math.floor((totalSegundos % 3600) / 60);
+    const segundos = totalSegundos % 60;
+    return `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+  };
+
+  const iniciar = () => {
+    setEmExecucao(true);
+  };
+
+  const pausar = () => {
+    setEmExecucao(false);
+    setIntervalos([...intervalos, { inicio: tempo, duracao: tempo }]);
+  };
+
+  const reiniciar = () => {
+    setTempo(0);
+    setEmExecucao(false);
+    setIntervalos([]);
+  };
+
+  return (
+    <div className="p-4 bg-white rounded-lg shadow-md">
+      <div className="flex items-center justify-center mb-4">
+        <Clock className="mr-2" />
+        <h2 className="text-2xl font-bold">{formatarTempo(tempo)}</h2>
+      </div>
+      <div className="flex justify-center space-x-2">
+        {!emExecucao ? (
+          <Button onClick={iniciar} className="bg-green-500 hover:bg-green-600">
+            <Play className="mr-2" /> Iniciar
+          </Button>
+        ) : (
+          <Button onClick={pausar} className="bg-yellow-500 hover:bg-yellow-600">
+            <Pause className="mr-2" /> Pausar
+          </Button>
+        )}
+        <Button 
+          onClick={reiniciar} 
+          variant="outline" 
+          className="border-gray-300 hover:bg-gray-100"
+        >
+          Reiniciar
+        </Button>
+      </div>
+      {intervalos.length > 0 && (
+        <div className="mt-4">
+          <h3 className="text-md font-semibold mb-2">Intervalos</h3>
+          {intervalos.map((intervalo, indice) => (
+            <div key={indice} className="text-sm text-gray-600">
+              Intervalo {indice + 1}: {formatarTempo(intervalo.duracao)}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default RastreadorDeTempo;
