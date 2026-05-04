@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#FAF7F2" />
+<title>Painel — Pedro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAF7F2;
+    --surface: #FFFFFF;
+    --surface-2: #F5F1EA;
+    --ink: #1A1A1A;
+    --ink-2: #3D3D3D;
+    --muted: #8A8579;
+    --line: #E8E2D8;
+    --line-strong: #D9D2C5;
+    --olive: #3D5A3D;
+    --olive-soft: #6B8A6B;
+    --terra: #B85C3C;
+    --gold: #B8965A;
+    --good: #3D5A3D;
+    --warn: #B85C3C;
+    --rad-sm: 10px;
+    --rad: 16px;
+    --rad-lg: 24px;
+    --shadow: 0 1px 0 rgba(26,26,26,.02), 0 8px 24px -16px rgba(26,26,26,.08);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-feature-settings: "ss01","cv11";
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+
+  .display { font-family: 'Fraunces', Georgia, serif; font-weight: 400; letter-spacing: -0.01em; }
+  .num { font-family: 'Fraunces', Georgia, serif; font-weight: 400; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .smallcaps { text-transform: uppercase; letter-spacing: .14em; font-size: 11px; font-weight: 500; color: var(--muted); }
+
+  /* ====== Top bar ====== */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(12px) saturate(140%);
+    background: rgba(250, 247, 242, 0.78);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    padding: 14px 28px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff 0, var(--olive) 60%);
+    box-shadow: inset 0 0 0 1px rgba(26,26,26,.06);
+  }
+  .brand-name { font-family: 'Fraunces', serif; font-weight: 500; font-size: 18px; letter-spacing: -0.01em; }
+  .topbar .meta { color: var(--muted); font-size: 13px; }
+  .topbar .actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--line);
+    font-size: 12.5px; color: var(--ink-2);
+    cursor: pointer; transition: background .15s;
+  }
+  .chip:hover { background: var(--surface-2); }
+  .chip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--olive); }
+  .chip-strong { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .chip-strong:hover { background: #2a2a2a; }
+
+  /* ====== Layout ====== */
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
+
+  /* ====== Hero ====== */
+  .hero {
+    padding: 32px 0 28px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 32px;
+  }
+  .hero .greet {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin: 0 0 8px;
+  }
+  .hero .greet em { font-style: italic; color: var(--olive); font-weight: 400; }
+  .hero .sub { color: var(--muted); font-size: 15px; max-width: 680px; }
+
+  .today-row { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 28px; }
+  @media (max-width: 880px) { .today-row { grid-template-columns: 1fr; } }
+
+  .reflection {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--rad);
+    padding: 22px 24px;
+  }
+  .reflection h3 { margin: 0 0 6px; font-family: 'Fraunces', serif; font-weight: 500; font-size: 18px; }
+  .reflection .prompt { color: var(--muted); font-size: 13.5px; margin-bottom: 14px; }
+  .reflection textarea {
+    width: 100%; min-height: 90px; resize: vertical;
+    border: none; background: transparent; outline: none;
+    font-family: inherit; font-size: 15px; color: var(--ink);
+    line-height: 1.6;
+  }
+  .reflection textarea::placeholder { color: #B8B0A0; font-style: italic; }
+  .reflection-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 12px; border-top: 1px dashed var(--line); }
+  .reflection-foot .smallcaps { font-size: 10.5px; }
+
+  .priorities {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--rad);
+    padding: 22px 24px;
+  }
+  .priorities h3 { margin: 0 0 14px; font-family: 'Fraunces', serif; font-weight: 500; font-size: 18px; }
+  .pri-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .pri-item { display: flex; align-items: center; gap: 12px; font-size: 14.5px; }
+  .pri-num {
+    flex: 0 0 22px; height: 22px; border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    display: grid; place-items: center;
+    font-family: 'Fraunces', serif; font-size: 12px; color: var(--muted);
+  }
+  .pri-item.done .pri-num { background: var(--olive); color: #fff; border-color: var(--olive); }
+  .pri-item.done .pri-text { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .pri-text { flex: 1; cursor: pointer; }
+
+  /* ====== Grid ====== */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 980px) {
+    .grid { grid-template-columns: repeat(6, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--rad);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column;
+  }
+  .card.bare { background: transparent; border: none; box-shadow: none; padding: 0; }
+  .card-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .card-title { font-family: 'Fraunces', serif; font-weight: 500; font-size: 17px; margin: 0; }
+  .card-eyebrow { display: flex; flex-direction: column; gap: 2px; }
+
+  .span-12 { grid-column: span 12; }
+  .span-8 { grid-column: span 8; }
+  .span-6 { grid-column: span 6; }
+  .span-4 { grid-column: span 4; }
+  @media (max-width: 980px) {
+    .span-8, .span-6, .span-4 { grid-column: span 6; }
+    .span-12 { grid-column: span 6; }
+  }
+  @media (max-width: 640px) {
+    .span-8, .span-6, .span-4, .span-12 { grid-column: span 2; }
+  }
+
+  /* ====== KPI tiles ====== */
+  .kpi-row {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+    background: var(--line);
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  @media (max-width: 760px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  .kpi {
+    background: var(--surface);
+    padding: 18px 20px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .kpi .label { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .kpi .value { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 400; letter-spacing: -0.02em; }
+  .kpi .delta { font-size: 12px; color: var(--muted); }
+  .kpi .delta.good { color: var(--good); }
+  .kpi .delta.warn { color: var(--warn); }
+  .kpi.accent .value { color: var(--olive); }
+  .kpi.warn .value { color: var(--terra); }
+
+  /* ====== Ring ====== */
+  .ring-wrap { display: flex; align-items: center; gap: 18px; }
+  .ring { width: 96px; height: 96px; flex: 0 0 96px; }
+  .ring-track { stroke: var(--line); }
+  .ring-fill { stroke: var(--olive); transition: stroke-dashoffset .6s ease; }
+  .ring-fill.warn { stroke: var(--terra); }
+  .ring-fill.gold { stroke: var(--gold); }
+  .ring-center {
+    font-family: 'Fraunces', serif; font-size: 22px; letter-spacing: -0.02em;
+    text-anchor: middle; dominant-baseline: middle;
+    fill: var(--ink);
+  }
+  .ring-center-sub { font-family: 'Inter', sans-serif; font-size: 9px; letter-spacing: .14em; fill: var(--muted); text-anchor: middle; }
+
+  /* ====== Bars ====== */
+  .bar {
+    background: var(--surface-2); border-radius: 6px; height: 6px; overflow: hidden;
+  }
+  .bar-fill { height: 100%; background: var(--olive); border-radius: 6px; }
+  .bar-fill.warn { background: var(--terra); }
+  .bar-fill.gold { background: var(--gold); }
+  .bar-row { display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: baseline; margin-bottom: 6px; }
+  .bar-label { font-size: 13px; color: var(--ink-2); }
+  .bar-amount { font-family: 'Fraunces', serif; font-size: 13.5px; color: var(--ink); }
+  .bar-amount .pct { color: var(--muted); font-size: 11.5px; margin-left: 6px; }
+
+  /* ====== Sparkline ====== */
+  .spark { width: 100%; height: 48px; }
+
+  /* ====== Lists ====== */
+  .list-row {
+    display: grid; grid-template-columns: 1fr auto; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .list-row:last-child { border-bottom: none; }
+  .list-row .name { color: var(--ink-2); }
+  .list-row .amt { font-family: 'Fraunces', serif; font-variant-numeric: tabular-nums; }
+
+  /* ====== Goals ====== */
+  .goal {
+    display: grid; grid-template-columns: 1fr auto; gap: 4px 16px;
+    align-items: baseline;
+    padding: 14px 0; border-bottom: 1px solid var(--line);
+  }
+  .goal:last-child { border-bottom: none; }
+  .goal .title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 500; }
+  .goal .amt { font-family: 'Fraunces', serif; font-size: 14px; color: var(--muted); }
+  .goal .meta { grid-column: 1 / -1; font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .goal .bar { margin-top: 8px; grid-column: 1 / -1; }
+  .goal .today {
+    grid-column: 1 / -1; margin-top: 8px;
+    font-size: 12.5px; color: var(--olive);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .goal .today::before {
+    content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--olive);
+  }
+
+  /* ====== Tabs ====== */
+  .tabs { display: flex; gap: 18px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+  .tab {
+    font-size: 13px; padding: 10px 0; cursor: pointer; color: var(--muted);
+    border-bottom: 1.5px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tab.active { color: var(--ink); border-color: var(--ink); }
+
+  /* ====== Section header ====== */
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin: 40px 0 18px;
+  }
+  .section-head h2 { font-family: 'Fraunces', serif; font-weight: 400; font-size: 26px; letter-spacing: -0.02em; margin: 0; }
+  .section-head .hint { color: var(--muted); font-size: 13px; }
+
+  /* ====== Misc ====== */
+  .divider { height: 1px; background: var(--line); margin: 16px 0; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 640px) { .row-2 { grid-template-columns: 1fr; } }
+
+  .pill {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 11px; letter-spacing: .04em;
+    background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--line);
+  }
+  .pill.olive { background: rgba(61,90,61,.08); color: var(--olive); border-color: rgba(61,90,61,.2); }
+  .pill.terra { background: rgba(184,92,60,.08); color: var(--terra); border-color: rgba(184,92,60,.2); }
+  .pill.gold { background: rgba(184,150,90,.1); color: #8E6F36; border-color: rgba(184,150,90,.25); }
+
+  .footer-note { color: var(--muted); font-size: 12px; text-align: center; margin-top: 60px; }
+  .footer-note a { color: var(--olive); }
+
+  /* ====== Streak ====== */
+  .streak { display: flex; gap: 4px; }
+  .streak .dot {
+    width: 12px; height: 12px; border-radius: 3px; background: var(--surface-2); border: 1px solid var(--line);
+  }
+  .streak .dot.on { background: var(--olive); border-color: var(--olive); }
+
+  /* ====== Big number ====== */
+  .bignum {
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: clamp(40px, 5vw, 60px); line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .bignum.small { font-size: clamp(28px, 3.4vw, 40px); }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="meta">
+      <span class="smallcaps">Seg · 04 Mai 2026</span>
+    </div>
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div class="brand-name">Painel</div>
+    </div>
+    <div class="actions">
+      <div class="chip"><span class="chip-dot"></span>Modo Foco</div>
+      <div class="chip chip-strong">Encerrar dia</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1 class="greet">Boa tarde, Pedro. <em>Dia 124 de 365.</em></h1>
+    <p class="sub">Você está no <strong>67° percentil</strong> do seu plano anual. Foco hoje: fechar a janela de treino e revisar o aporte de maio.</p>
+
+    <div class="today-row">
+      <div class="reflection">
+        <h3>Reflexão de hoje</h3>
+        <div class="prompt">O que está funcionando? O que precisa de ajuste? Onde está sua energia agora?</div>
+        <textarea placeholder="Hoje eu percebi que…"></textarea>
+        <div class="reflection-foot">
+          <span class="smallcaps">Histórico · 38 entradas</span>
+          <span class="pill olive">Streak · 12 dias</span>
+        </div>
+      </div>
+
+      <div class="priorities">
+        <h3>3 prioridades</h3>
+        <ul class="pri-list">
+          <li class="pri-item done"><div class="pri-num">1</div><div class="pri-text">Revisar fechamento financeiro de abril</div></li>
+          <li class="pri-item"><div class="pri-num">2</div><div class="pri-text">Treino: pull-ups · meta 9 reps</div></li>
+          <li class="pri-item"><div class="pri-num">3</div><div class="pri-text">Estudar 1h · UK Master's</div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINANCEIRO ============ -->
+  <div class="section-head">
+    <h2>Financeiro</h2>
+    <span class="hint">Mês de referência · <strong>Abril/2026</strong> (último fechado)</span>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row" style="margin-bottom: 20px;">
+    <div class="kpi">
+      <span class="label">Entradas</span>
+      <span class="value">R$ 5.867</span>
+      <span class="delta good">+20,7% vs plano</span>
+    </div>
+    <div class="kpi">
+      <span class="label">Saídas</span>
+      <span class="value">R$ 5.801</span>
+      <span class="delta warn">+6,4% vs plano</span>
+    </div>
+    <div class="kpi accent">
+      <span class="label">Saldo</span>
+      <span class="value">R$ 67</span>
+      <span class="delta">no azul · 5° mês seguido</span>
+    </div>
+    <div class="kpi">
+      <span class="label">Investido</span>
+      <span class="value">R$ 4.100</span>
+      <span class="delta good">102% do plano</span>
+    </div>
+    <div class="kpi accent">
+      <span class="label">Taxa de poupança</span>
+      <span class="value">69,9%</span>
+      <span class="delta good">acima da meta (50%)</span>
+    </div>
+  </div>
+
+  <!-- Financeiro: 3 colunas -->
+  <div class="grid">
+
+    <!-- Distribuição planejada -->
+    <div class="card span-4">
+      <div class="card-head">
+        <div class="card-eyebrow">
+          <span class="smallcaps">Plano do salário</span>
+          <h3 class="card-title">Distribuição</h3>
+        </div>
+        <span class="pill">Real R$ 7.512</span>
+      </div>
+
+      <div class="bar-row"><span class="bar-label">Investimentos</span><span class="bar-amount">R$ 5.033 <span class="pct">67%</span></span></div>
+      <div class="bar"><div class="bar-fill" style="width:67%"></div></div>
+
+      <div class="bar-row" style="margin-top:14px"><span class="bar-label">Alimentação</span><span class="bar-amount">R$ 1.500 <span class="pct">20%</span></span></div>
+      <div class="bar"><div class="bar-fill gold" style="width:20%"></div></div>
+
+      <div class="bar-row" style="margin-top:14px"><span class="bar-label">Lazer</span><span class="bar-amount">R$ 601 <span class="pct">8%</span></span></div>
+      <div class="bar"><div class="bar-fill gold" style="width:8%"></div></div>
+
+      <div class="bar-row" style="margin-top:14px"><span class="bar-label">Educação</span><span class="bar-amount">R$ 225 <span class="pct">3%</span></span></div>
+      <div class="bar"><div class="bar-fill gold" style="width:3%"></div></div>
+
+      <div class="bar-row" style="margin-top:14px"><span class="bar-label">Despesas básicas</span><span class="bar-amount">R$ 153 <span class="pct">2%</span></span></div>
+      <div class="bar"><div class="bar-fill" style="width:2%"></div></div>
+
+      <div class="divider"></div>
+      <div style="font-size:12.5px; color: var(--muted); line-height: 1.5;">
+        Salário bruto <strong style="color:var(--ink)">R$ 7.984</strong> · líquido <strong style="color:var(--ink)">R$ 6.012</strong> · com VA/VR <strong style="color:var(--ink)">R$ 7.512</strong>
+      </div>
+    </div>
+
+    <!-- Macro categorias -->
+    <div class="card span-4">
+      <div class="card-head">
+        <div class="card-eyebrow">
+          <span class="smallcaps">Abril · realizado</span>
+          <h3 class="card-title">Por macro categoria</h3>
+        </div>
+      </div>
+
+      <div class="bar-row"><span class="bar-label">Renda</span><span class="bar-amount">R$ 5.867 <span class="pct">120% plano</span></span></div>
+      <div class="bar"><div class="bar-fill" style="width:100%"></div></div>
+
+      <div class="bar-row" style="margin-top:14px"><span class="bar-label">Despesa básica</span><span class="bar-amount">R$ 1.701 <span class="pct">117% · estourou</span></span></div>
+      <div class="bar"><div class="bar-fill warn" style="width:29%"></div></div>
+
+      <div class="bar-row" style="margin-top:14px"><span class="bar-label">Investimentos</span><span class="bar-amount">R$ 4.100 <span class="pct">102% plano</span></span></div>
+      <div class="bar"><div class="bar-fill" style="width:69.9%"></div></div>
+
+      <div class="bar-row" style="margin-top:14px"><span class="bar-label">Alimentação</span><span class="bar-amount">— <span class="pct">0%</span></span></div>
+      <div class="bar"><div class="bar-fill" style="width:0%"></div></div>
+
+      <div class="bar-row" style="margin-top:14px"><span class="bar-label">Lazer</span><span class="bar-amount">— <span class="pct">0%</span></span></div>
+      <div class="bar"><div class="bar-fill" style="width:0%"></div></div>
+
+      <div class="bar-row" style="margin-top:14px"><span class="bar-label">Educação</span><span class="bar-amount">— <span class="pct">0%</span></span></div>
+      <div class="bar"><div class="bar-fill" style="width:0%"></div></div>
+
+      <div class="divider"></div>
+      <div style="font-size:12.5px; color: var(--terra); line-height: 1.5;">
+        ⚠ Aluguel + condomínio +18% do plano · revisar recorrência
+      </div>
+    </div>
+
+    <!-- Reserva de Emergência -->
+    <div class="card span-4">
+      <div class="card-head">
+        <div class="card-eyebrow">
+          <span class="smallcaps">CDB Itaú</span>
+          <h3 class="card-title">Reserva de emergência</h3>
+        </div>
+        <span class="pill olive">+R$ 4.100</span>
+      </div>
+
+      <div class="ring-wrap">
+        <svg class="ring" viewBox="0 0 100 100">
+          <circle class="ring-track" cx="50" cy="50" r="42" fill="none" stroke-width="6"/>
+          <circle class="ring-fill" cx="50" cy="50" r="42" fill="none" stroke-width="6"
+                  stroke-linecap="round"
+                  stroke-dasharray="263.89" stroke-dashoffset="103.5"
+                  transform="rotate(-90 50 50)"/>
+          <text class="ring-center" x="50" y="50">61%</text>
+          <text class="ring-center-sub" x="50" y="66">DA META</text>
+        </svg>
+        <div>
+          <div class="bignum small">R$ 65.278</div>
+          <div style="color: var(--muted); font-size: 13px; margin-top: 4px;">de R$ 107.266 projetados pra dez/26</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div style="display:flex; flex-direction:column; gap: 10px;">
+        <div class="list-row"><span class="name">Aporte mai/26</span><span class="amt" style="color:var(--muted)">R$ —</span></div>
+        <div class="list-row"><span class="name">Aporte jun/26 <span class="pill" style="margin-left:6px">previsto</span></span><span class="amt">R$ 6.000</span></div>
+        <div class="list-row"><span class="name">Aporte dez/26 <span class="pill gold" style="margin-left:6px">13°</span></span><span class="amt">R$ 10.988</span></div>
+      </div>
+    </div>
+
+    <!-- Patrimônio (linha cheia) -->
+    <div class="card span-8">
+      <div class="card-head">
+        <div class="card-eyebrow">
+          <span class="smallcaps">Visão de longo prazo</span>
+          <h3 class="card-title">Patrimônio em projetos</h3>
+        </div>
+        <div class="tabs" style="border:none; margin:0;">
+          <span class="tab active">Investido</span>
+          <span class="tab">Retorno</span>
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div>
+          <div class="smallcaps">Short term rental</div>
+          <div class="bignum small">R$ 12.384</div>
+          <div style="font-size:12.5px; color:var(--muted); margin-top:4px">Receita mensal · 87% ocupação · 26 dias/mês</div>
+          <div class="bar" style="margin-top:10px"><div class="bar-fill" style="width:62%"></div></div>
+        </div>
+        <div>
+          <div class="smallcaps">UK Master's leverage</div>
+          <div class="bignum small">R$ 65.860</div>
+          <div style="font-size:12.5px; color:var(--muted); margin-top:4px">Allowance + part-time · plano 12 meses</div>
+          <div class="bar" style="margin-top:10px"><div class="bar-fill gold" style="width:38%"></div></div>
+        </div>
+        <div>
+          <div class="smallcaps">Black acceleration</div>
+          <div class="bignum small">R$ 165.000</div>
+          <div style="font-size:12.5px; color:var(--muted); margin-top:4px">Programa 24-25 · receita total</div>
+          <div class="bar" style="margin-top:10px"><div class="bar-fill" style="width:78%"></div></div>
+        </div>
+        <div>
+          <div class="smallcaps">Reserva de emergência</div>
+          <div class="bignum small">R$ 65.278</div>
+          <div style="font-size:12.5px; color:var(--muted); margin-top:4px">CDB Itaú · 61% da meta de dez/26</div>
+          <div class="bar" style="margin-top:10px"><div class="bar-fill" style="width:61%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Milhas -->
+    <div class="card span-4">
+      <div class="card-head">
+        <div class="card-eyebrow">
+          <span class="smallcaps">Programas</span>
+          <h3 class="card-title">Milhas acumuladas</h3>
+        </div>
+      </div>
+      <div class="bignum">43.530</div>
+      <div style="color: var(--muted); font-size: 13px; margin-top: 6px;">≈ 1 trecho intercontinental econômico</div>
+      <div class="divider"></div>
+      <div class="list-row"><span class="name">Smiles</span><span class="amt">14.930</span></div>
+      <div class="list-row"><span class="name">XP Bank</span><span class="amt">14.390</span></div>
+      <div class="list-row"><span class="name">Miles &amp; Smiles</span><span class="amt">13.992</span></div>
+      <div class="list-row"><span class="name">Atômos · C6</span><span class="amt">218</span></div>
+    </div>
+
+  </div>
+
+  <!-- ============ TREINO + SAÚDE ============ -->
+  <div class="section-head">
+    <h2>Corpo</h2>
+    <span class="hint">Última sincronização · há 2h</span>
+  </div>
+
+  <div class="grid">
+    <!-- Treino -->
+    <div class="card span-6">
+      <div class="card-head">
+        <div class="card-eyebrow">
+          <span class="smallcaps">Hoje · Pull day</span>
+          <h3 class="card-title">Wide grip pull-ups</h3>
+        </div>
+        <span class="pill olive">Sessão 4</span>
+      </div>
+
+      <div style="display:flex; align-items:flex-end; gap: 24px;">
+        <div>
+          <div class="bignum">9</div>
+          <div class="smallcaps" style="margin-top:4px">Reps · meta de hoje</div>
+        </div>
+        <div style="color: var(--muted); font-size: 13px; padding-bottom: 10px;">
+          Última: <strong style="color:var(--ink)">8 reps</strong> · recorde <strong style="color:var(--ink)">10 reps</strong>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="smallcaps" style="margin-bottom: 8px;">Tendência · últimas 10 sessões</div>
+      <svg class="spark" viewBox="0 0 300 60" preserveAspectRatio="none">
+        <polyline fill="none" stroke="#3D5A3D" stroke-width="1.5"
+          points="0,42 33,40 66,38 99,30 132,32 165,28 198,22 231,18 264,12 300,8"/>
+        <circle cx="300" cy="8" r="3" fill="#3D5A3D"/>
+      </svg>
+
+      <div class="divider"></div>
+
+      <div class="row-2" style="gap:16px">
+        <div>
+          <div class="smallcaps">Streak da semana</div>
+          <div class="streak" style="margin-top:8px">
+            <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div>
+            <div class="dot on"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+        </div>
+        <div>
+          <div class="smallcaps">Volume · 7 dias</div>
+          <div style="font-family:'Fraunces',serif; font-size:22px; margin-top:4px">+18%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Saúde -->
+    <div class="card span-6">
+      <div class="card-head">
+        <div class="card-eyebrow">
+          <span class="smallcaps">Whoop · live</span>
+          <h3 class="card-title">Recuperação</h3>
+        </div>
+        <span class="pill olive">Vai com tudo</span>
+      </div>
+
+      <div class="ring-wrap">
+        <svg class="ring" viewBox="0 0 100 100" style="width:120px; height:120px; flex-basis:120px">
+          <circle class="ring-track" cx="50" cy="50" r="42" fill="none" stroke-width="6"/>
+          <circle class="ring-fill" cx="50" cy="50" r="42" fill="none" stroke-width="6"
+                  stroke-linecap="round"
+                  stroke-dasharray="263.89" stroke-dashoffset="50.14"
+                  transform="rotate(-90 50 50)"/>
+          <text class="ring-center" x="50" y="50" style="font-size:28px">81</text>
+          <text class="ring-center-sub" x="50" y="68">RECOVERY</text>
+        </svg>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div>
+            <div class="smallcaps">Sono</div>
+            <div style="font-family:'Fraunces',serif; font-size:24px; line-height:1">82% <span style="color:var(--muted); font-size:13px">· 7h 46m</span></div>
+          </div>
+          <div>
+            <div class="smallcaps">HRV</div>
+            <div style="font-family:'Fraunces',serif; font-size:24px; line-height:1">115 <span style="color:var(--muted); font-size:13px">ms</span></div>
+          </div>
+          <div>
+            <div class="smallcaps">Strain</div>
+            <div style="font-family:'Fraunces',serif; font-size:24px; line-height:1">13.2 <span style="color:var(--muted); font-size:13px">/ 21</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row-2" style="gap:16px">
+        <div>
+          <div class="smallcaps">Frequência basal</div>
+          <div style="font-family:'Fraunces',serif; font-size:22px; margin-top:4px">45 <span style="color:var(--muted); font-size:12px">bpm</span></div>
+        </div>
+        <div>
+          <div class="smallcaps">Temperatura pele</div>
+          <div style="font-family:'Fraunces',serif; font-size:22px; margin-top:4px">32,5 <span style="color:var(--muted); font-size:12px">°C</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ METAS ============ -->
+  <div class="section-head">
+    <h2>Metas 2026</h2>
+    <span class="hint">Janela · 124 / 365 dias · 34%</span>
+  </div>
+
+  <div class="card span-12" style="grid-column: span 12; padding: 28px 32px;">
+    <div class="goal">
+      <div class="title">Reserva de emergência · R$ 107k</div>
+      <div class="amt">R$ 65.278 / R$ 107.266</div>
+      <div class="bar"><div class="bar-fill" style="width:61%"></div></div>
+      <div class="meta">61% concluído · projeção mantém o ritmo até dez/26</div>
+      <div class="today">Hoje: confirmar aporte automático de maio</div>
+    </div>
+
+    <div class="goal">
+      <div class="title">Pull-ups · 12 reps consecutivas</div>
+      <div class="amt">10 / 12 reps</div>
+      <div class="bar"><div class="bar-fill" style="width:83%"></div></div>
+      <div class="meta">Recorde atual: 10 reps · meta atinge em ~6 sessões no ritmo atual</div>
+      <div class="today">Hoje: bater 9 reps em pelo menos 1 série</div>
+    </div>
+
+    <div class="goal">
+      <div class="title">UK Master's · pré-requisitos</div>
+      <div class="amt">3 / 7 etapas</div>
+      <div class="bar"><div class="bar-fill gold" style="width:43%"></div></div>
+      <div class="meta">IELTS pendente · application abre em set/26</div>
+      <div class="today">Hoje: 1h de estudo + revisar redação</div>
+    </div>
+
+    <div class="goal">
+      <div class="title">Taxa de poupança média · 60%/ano</div>
+      <div class="amt">69,9% YTD</div>
+      <div class="bar"><div class="bar-fill" style="width:100%"></div></div>
+      <div class="meta">Acima da meta · margem pra revisar lazer/alimentação sem estourar</div>
+      <div class="today">Manter</div>
+    </div>
+  </div>
+
+  <p class="footer-note">
+    Última leitura da planilha · 04 mai 2026, 22:29 · <a href="#">atualizar</a> &nbsp;·&nbsp; Modo: estático
+  </p>
+
+</main>
+
+<script>
+  // toggle priorities
+  document.querySelectorAll('.pri-item').forEach(el => {
+    el.addEventListener('click', () => el.classList.toggle('done'));
+  });
+  // toggle tabs
+  document.querySelectorAll('.tabs').forEach(group => {
+    group.querySelectorAll('.tab').forEach(t => {
+      t.addEventListener('click', () => {
+        group.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
