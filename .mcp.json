@@ -3,6 +3,14 @@
     "playwright": {
       "command": "npx",
       "args": ["@playwright/mcp@latest"]
+    },
+    "figma": {
+      "command": "npx",
+      "args": ["figma-developer-mcp", "--stdio"]
+    },
+    "composio": {
+      "command": "npx",
+      "args": ["@composio/mcp@latest"]
     }
   }
 }
