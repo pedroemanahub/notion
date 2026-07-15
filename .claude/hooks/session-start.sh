@@ -1,22 +1,39 @@
 #!/usr/bin/env bash
-# SessionStart hook — injects a short routing reminder so Claude picks the
-# right skill/MCP on the very first turn without the user asking.
-# Output goes to stdout as an additional context message.
+# SessionStart hook — routing reminder covering skills, MCPs, connectors,
+# built-in tools, and subagents. Read CLAUDE.md at repo root for the full
+# tables. Fires on every new session in this repo.
 
 cat <<'EOF'
-[session-start] 42-skill design pack loaded on this repo.
+[session-start] Full-stack routing loaded. See CLAUDE.md for tables.
 
-Routing quick reference (see CLAUDE.md for the full table):
-  • Frontend/UI slop → invoke taste-skill, impeccable, or frontend-design
-  • Motion / animation → animate + design-motion-principles
-  • Browser verification loop → playwright MCP (open URL, screenshot,
-    compare, iterate CSS)
-  • Figma → code → figma MCP (figma-developer-mcp)
-  • Cross-app orchestration → composio MCP
-  • Product-AI behavior (context, turns, generative UI) → Camada 04 skills
-  • Prompt architecture → Camada 05 skills
+Proactive-use rule: match the task, invoke the top match yourself,
+announce briefly, proceed. Do NOT wait for the user to name a skill,
+turn on an MCP, or select a tool.
+
+Skill triggers (auto-invoked by description matching):
+  • Frontend/UI slop → taste-skill · impeccable · frontend-design
+  • Motion / animation / hover → animate · design-motion-principles
+  • Charts, plots, dashboards → dataviz (read BEFORE any chart code)
+  • Artifacts (HTML/MD pages) → artifact-design (read BEFORE Artifact tool)
+  • Spreadsheets / decks / PDFs / Word → xlsx · pptx · pdf · docx
+  • AI writing tics on prose → humanizer (final pass)
+  • Prompt / persona / tone work → Camada 05 skills
   • Trust / refusals / transparency → Camada 06 skills
 
-Rule: invoke the matching Skill via the Skill tool BEFORE writing code.
-Do not wait for the user to name it.
+MCP triggers:
+  • Screenshot a URL & compare with reference → playwright
+  • Figma → production code → figma
+  • Cross-app orchestration (1000+ apps) → composio
+  • Email, calendar, drive, Notion, GitHub, YouTube analytics →
+    Gmail · Google_Calendar · Google_Drive · Notion · github · Algrow
+
+Subagent triggers:
+  • Find files/symbols across many paths → Agent(Explore)
+  • Design an implementation strategy → Agent(Plan)
+  • Independent second-opinion review → /code-review
+  • Anything else needing a fresh context → Agent(general-purpose)
+
+Verification loop: after any UI change, use playwright MCP to screenshot
+at 1920 & 390, compare with the reference, iterate CSS until they match.
+That's "giving the agent eyes."
 EOF
